@@ -51,6 +51,7 @@ bot.on('ready', () => {
   console.info('Selfbot ready with these settings:', conf)
 })
 
+// Handle commands
 bot.on('message', function (message) {
   if (message.author.id === conf['owner-id'] && message.content.startsWith(conf.prefix)) {
     let trigger = message.content.split(' ')[0].substr(1)
