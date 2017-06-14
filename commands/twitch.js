@@ -12,7 +12,6 @@ module.exports = {
 module.exports.run = function (message) {
   message.delete()
 
-  //let raw = message.content.substr(message.content.indexOf(' ') + 1)
   let split = message.content.split(' ')
   let raw = split[1]
   let scale = split[2] ? split[2].toLowerCase() : 'small'

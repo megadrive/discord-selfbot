@@ -1,0 +1,1 @@
+//https://github.com/strawpoll/strawpoll/issues/74

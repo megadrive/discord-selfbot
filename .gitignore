@@ -1,3 +1,4 @@
 *-lock.json
 node_modules/
 config.json
+notify.json
