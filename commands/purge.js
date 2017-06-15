@@ -10,7 +10,10 @@ module.exports = {
 module.exports.run = function (message) {
   message.delete()
 
-  message.channel.fetchMessages({limit: 100})
+  let args = message.content.split(' ')
+  let lmt = args[1] !== undefined ? args[1] : 10
+
+  message.channel.fetchMessages({limit: lmt})
     .then(function (messages) {
       let filteredMessages = messages.filter(function (e) {
         return (e.author.id === conf['owner-id'])

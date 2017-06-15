@@ -9,6 +9,7 @@
   "author": "Megadrive <a.simeon@gmail.com> (http://megadriven.net/)",
   "license": "ISC",
   "dependencies": {
+    "convert-units": "^2.2.0",
     "date-difference": "^1.0.0",
     "discord.js": "^11.1.0",
     "got": "^7.0.0",

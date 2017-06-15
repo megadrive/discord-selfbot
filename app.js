@@ -6,6 +6,9 @@ let bot = new Discord.Client()
 bot.commands = {
   message: {}
 }
+bot.modules = {
+  message: {}
+}
 
 let LogLevel = { verbose: 0, error: 1, warn: 2, info: 3, none: 99 }
 let debugLevel = LogLevel.info
@@ -29,6 +32,10 @@ function registerCommand (file, module) {
         }
       }
 
+      if (module.module && typeof module.module === 'function') {
+        bot.modules[module.event][module.aliases[0]] = module.module
+      }
+
       resolve(`Successfully added module ${file} with aliases: ${module.aliases} on event ${module.event}`)
     }
   })
@@ -40,7 +47,7 @@ for (let i = 0; i < _cmds.length; i++) {
   let cmd = require(`./commands/${_cmds[i]}`)
   registerCommand(_cmds[i], cmd)
     .then(function (f) {
-      log.info(`Registered command ${f}`)
+      log.info(`Registered command -- ${f}`)
     })
     .catch(function (err) {
       log.error(err)
@@ -53,11 +60,19 @@ bot.on('ready', () => {
 
 // Handle commands
 bot.on('message', function (message) {
-  if (message.author.id === conf['owner-id'] && message.content.startsWith(conf.prefix)) {
-    let trigger = message.content.split(' ')[0].substr(1)
-    let func = bot.commands['message'][trigger]
-    if (typeof func === 'function' && func !== undefined) {
-      func(message)
+  if (message.author.id === conf['owner-id']) {
+    if (message.content.startsWith(conf.prefix)) {
+      let trigger = message.content.split(' ')[0].substr(1)
+      let func = bot.commands['message'][trigger]
+      if (typeof func === 'function' && func !== undefined) {
+        func(message)
+      }
+    } else {
+      // run all modules
+      let keys = Object.keys(bot.modules['message'])
+      for (let i = 0; i < keys.length; i++) {
+        bot.modules['message'][keys[i]](message)
+      }
     }
   }
 })
