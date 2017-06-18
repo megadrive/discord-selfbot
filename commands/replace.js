@@ -1,9 +1,11 @@
 'use strict'
 
 let jsonfile = require('jsonfile')
+let RichEmbed = require('discord.js').RichEmbed
+let jsesc = require('jsesc')
 
 module.exports = {
-  aliases: ['replace'],
+  aliases: ['replace', 'repl'],
   event: 'message'
 }
 
@@ -18,6 +20,8 @@ module.exports.module = function (message) {
 
   let regex = new RegExp('{{(' + words + ')}}', 'g')
   let match = message.content.match(regex)
+
+  if (match === null) return
 
   let newContent = message.content
   for (let i = 0; i < match.length; i++) {
@@ -44,7 +48,7 @@ module.exports.run = function (message) {
     let reply = `[replace] Word '${word}' `
     if (action === 'add') {
       if (json.data.includes(word) === false) {
-        json.data.push([word, replacer])
+        json.data.push([word, jsesc(replacer, {json: true})])
         reply += `was added. You can use {{${word}}} to add ${replacer} in messages.`
       } else {
         reply += `is already in the list.`
@@ -59,8 +63,20 @@ module.exports.run = function (message) {
         json.data = Array.from(data)
         reply += `was removed from the list.`
       }
+    } else if (action === 'list') {
+      let data = new Map(json.data)
+      let embed = new RichEmbed()
+        .setTitle('List of Replaceable text')
+        .setColor('red')
+
+      for (var v of data) {
+        embed.addField(v[0], v[1], true)
+      }
+
+      message.channel.send({embed: embed}).catch(err => console.error(err))
+      return // special case
     } else {
-      reply = `[replace] Available actions are 'add <word> <replacer>' and 'remove <word>'`
+      reply = `[replace] Available actions are 'add <word> <replacer>' and 'remove <word>' and 'list'`
     }
 
     jsonfile.writeFileSync(replaceFile, json)
