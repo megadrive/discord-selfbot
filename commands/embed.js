@@ -31,8 +31,8 @@ function getUrlFromRedditUrl (redditUrl) {
           }
         })
     } else {
-			reject(new Error('[embed] Not a Reddit URL'))
-		}
+      reject(new Error('[embed] Not a Reddit URL'))
+    }
   })
 }
 

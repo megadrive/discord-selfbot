@@ -2,7 +2,6 @@
 
 let jsonfile = require('jsonfile')
 let RichEmbed = require('discord.js').RichEmbed
-let jsesc = require('jsesc')
 
 module.exports = {
   aliases: ['replace', 'repl'],
@@ -49,7 +48,7 @@ module.exports.run = function (message) {
     let reply = `[replace] Word '${word}' `
     if (action === 'add') {
       if (json.data.includes(word) === false) {
-        json.data.push([word, jsesc(replacer, {json: true})])
+        json.data.push([word, replacer, {json: true}])
         reply += `was added. You can use {{${word}}} to add ${replacer} in messages.`
       } else {
         reply += `is already in the list.`
