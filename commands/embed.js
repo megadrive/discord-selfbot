@@ -8,18 +8,30 @@ module.exports = {
 }
 
 function getUrlFromRedditUrl (redditUrl) {
-  let reReddit = new RegExp('(www.)?redd\.?it(.com)?.+')
-  let reUrl = new RegExp('<p class="title">.+href="http(.+)" tabindex', 'i')
-  let ret = redditUrl
+  return new Promise(function (resolve, reject) {
+    let reReddit = new RegExp('(www.)?redd.?it(.com)?.+')
+    let reTitle = new RegExp('<title>(.+) : .+</title>', 'i')
+    let reUrl = new RegExp('data-url="(.+?)"')
+    let reShortlink = new RegExp('<link rel="shorturl" href="(https?://redd.it/.+?)"/>')
 
-  console.info(reReddit, redditUrl)
-  if (redditUrl.match(reReddit)) {
-    got(redditUrl)
-      .then(function (res) {
-        let matched = res.body.match(reUrl)
-        console.info('here', matched)
-      })
-  }
+    if (redditUrl.match(reReddit)) {
+      got(redditUrl)
+        .then(function (res) {
+          let title = reTitle.exec(res.body)
+          let url = res.body.match(reUrl)
+          let shortlink = res.body.match(reShortlink)
+          if (title && url && shortlink) {
+            resolve({
+              title: title[1],
+              url: url[1],
+              shortlink: shortlink[1]
+            })
+          } else {
+            reject(new Error('[embed] No URL found in Reddit URL'))
+          }
+        })
+    }
+  })
 }
 
 module.exports.run = function (message) {
@@ -27,10 +39,15 @@ module.exports.run = function (message) {
 
   let url = null
   if (message.content.indexOf(' ') >= 0) {
-    url = message.content.substr(message.content.indexOf(' ') + 1)
-    getUrlFromRedditUrl(url)
+    getUrlFromRedditUrl(message.content.split(' ')[1])
+      .then(function (data) {
+        message.channel.send(`${data.title} -- ${data.shortlink}`, {files: [{attachment: data.url}]})
+      })
+      .catch(function (err) {
+        if (err) console.warn(err)
+
+        url = message.content.substr(message.content.indexOf(' ') + 1)
+        message.channel.send({files: [{attachment: url}]})
+      })
   }
-  message.channel.send({files: [{attachment: url}]})
 }
-
-

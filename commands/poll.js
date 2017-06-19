@@ -20,7 +20,7 @@ module.exports.run = function (message) {
   for (let i = 0; i < options.length; i++) {
     options[i] = options[i].trim()
   }
-  
+
   got('https://www.strawpoll.me/api/v2/polls', {
     method: 'POST',
     json: true,

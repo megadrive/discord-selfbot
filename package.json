@@ -4,6 +4,7 @@
   "description": "my own discord selfbot",
   "main": "app.js",
   "scripts": {
+    "gulp": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Megadrive <a.simeon@gmail.com> (http://megadriven.net/)",
@@ -15,5 +16,9 @@
     "got": "^7.0.0",
     "jsesc": "^2.5.1",
     "jsonfile": "^3.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "standard": "^10.0.2"
   }
 }
