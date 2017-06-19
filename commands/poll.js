@@ -30,6 +30,6 @@ module.exports.run = function (message) {
     }
   })
     .then(function (res) {
-      message.channel.send(`\`[poll] ${title}\` https://www.strawpoll.me/${res.body.id}`)
+      message.channel.send(`${title} https://www.strawpoll.me/${res.body.id}`)
     })
 }
