@@ -30,7 +30,9 @@ function getUrlFromRedditUrl (redditUrl) {
             reject(new Error('[embed] No URL found in Reddit URL'))
           }
         })
-    }
+    } else {
+			reject(new Error('[embed] Not a Reddit URL'))
+		}
   })
 }
 
