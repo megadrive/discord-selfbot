@@ -7,7 +7,7 @@ module.exports = {
   event: 'message'
 }
 
-let notifyFile = './notify.json'
+let notifyFile = './db/notify.json'
 module.exports.run = function (message) {
   message.delete()
   let args = message.content.split(' ')

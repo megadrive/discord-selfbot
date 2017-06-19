@@ -1,6 +1,6 @@
 'use strict'
 
-let g = require('../twitch_global.json')
+let g = require('../db/twitch_global.json')
 let got = require('got')
 let fs = require('fs')
 

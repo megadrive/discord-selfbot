@@ -1,6 +1,6 @@
 'use strict'
 
-let bttv = require('../bttv.json').emotes
+let bttv = require('../db/bttv.json').emotes
 let got = require('got')
 let fs = require('fs')
 

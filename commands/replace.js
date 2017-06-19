@@ -9,7 +9,7 @@ module.exports = {
   event: 'message'
 }
 
-let replaceFile = './replace.json'
+let replaceFile = './db/replace.json'
 
 module.exports.module = function (message) {
   let json = jsonfile.readFileSync(replaceFile, {throws: false})
@@ -32,6 +32,7 @@ module.exports.module = function (message) {
 
   message.edit(newContent)
 }
+
 module.exports.run = function (message) {
   message.delete()
   let args = message.content.split(' ')
