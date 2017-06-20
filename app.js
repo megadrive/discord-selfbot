@@ -1,6 +1,5 @@
 'use strict'
 
-let fs = require('fs')
 let conf = require('./config')
 const Discord = require('discord.js')
 let bot = new Discord.Client()
@@ -48,17 +47,6 @@ function registerCommand (file, module) {
 
       resolve(`Successfully added module ${file} with aliases: ${module.aliases} on event ${module.event}`)
     }
-  })
-}
-
-// Create temp folder if it doesn't exist
-if (fs.existsSync('./temp') === false) {
-  fs.mkdir('./temp', function (err) {
-    if (err) {
-      console.error('Temp folder could not be created. Do you have required permissions to create files/folders?')
-      throw new Error(err)
-    }
-    console.info('temp/ folder doesn\'t exist, creating..')
   })
 }
 
