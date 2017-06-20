@@ -1,9 +1,10 @@
 {
   "name": "discordselfbot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "my own discord selfbot",
   "main": "app.js",
   "scripts": {
+		"start": "node app.js",
     "gulp": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +20,18 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "standard": "^10.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/megadrive/discord-selfbot.git"
+  },
+  "keywords": [
+    "discordjs",
+    "discord",
+    "selfbot"
+  ],
+  "bugs": {
+    "url": "https://github.com/megadrive/discord-selfbot/issues"
+  },
+  "homepage": "https://github.com/megadrive/discord-selfbot#readme"
 }

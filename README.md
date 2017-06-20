@@ -8,9 +8,11 @@
 
 ## How to run
 
-1. Clone the repo
+1. Clone the repo or use npm
 
 `$ git clone https://github.com/megadrive/discord-selfbot`
+
+`$ npm install discordselfbot`
 
 2. Install dependencies
 
