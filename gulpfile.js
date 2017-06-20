@@ -1,5 +1,7 @@
 let gulp = require('gulp')
 let standard = require('standard')
+let got = require('got')
+let fs = require('fs')
 
 gulp.task('lint', function () {
   let opts = {
@@ -22,4 +24,12 @@ gulp.task('lint', function () {
   standard.lintFiles('commands/*.js', opts, cb)
 })
 
-gulp.task('default', ['lint'])
+gulp.task('getEmoteJSONs', function () {
+  let ffzGlobalUrl = 'https://twitchemotes.com/api_cache/v2/global.json'
+  let bttvUrl = 'https://api.betterttv.net/emotes'
+
+  got.stream(ffzGlobalUrl).pipe(fs.createWriteStream('./db/twitch_global.json'))
+  got.stream(bttvUrl).pipe(fs.createWriteStream('./db/bttv.json'))
+})
+
+gulp.task('default', ['lint', 'getEmoteJSONs'])
