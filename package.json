@@ -1,5 +1,5 @@
 {
-  "name": "discordbot",
+  "name": "discordselfbot",
   "version": "0.0.1",
   "description": "my own discord selfbot",
   "main": "app.js",
