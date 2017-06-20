@@ -5,6 +5,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Changes what game you're 'playing'. NOTE: You cannot see this but others can.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]} [string]`]
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
   let game = null

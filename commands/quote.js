@@ -7,6 +7,17 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Adds or gets a quote by a member. Quotes are confined to the server they were made on. Must use an @mention. If you don't have permissions for Embeds, will fall back to plaintext.`,
+    usage: [
+      `${conf.prefix}${module.exports.aliases[0]} [@mention] [the quote]`,
+      `${conf.prefix}${module.exports.aliases[0]} get [@mention]`
+    ]
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
 

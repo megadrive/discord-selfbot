@@ -7,6 +7,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Allows you to set words to be notified about via DM.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]} add [word]\n${conf.prefix}${module.exports.aliases[0]} remove [word]`]
+  }
+}
+
 let notifyFile = './db/notify.json'
 module.exports.run = function (message) {
   message.delete()

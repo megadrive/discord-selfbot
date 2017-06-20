@@ -7,6 +7,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Outputs the uptime of the bot.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]}`]
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
 

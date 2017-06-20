@@ -7,6 +7,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: 'Converts units from one to another. Supported units are at https://github.com/ben-ng/convert-units',
+    usage: `${conf.prefix}${module.exports.aliases[0]} [number] [unit] to [unit]`
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
   let args = message.content.split(' ')

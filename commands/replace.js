@@ -8,6 +8,18 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Adds, removes or lists replacement text. This will replace any {{key}} in a message with the value.`,
+    usage: [
+      `${conf.prefix}${module.exports.aliases[0]} add [key] [replacement text]`,
+      `${conf.prefix}${module.exports.aliases[0]} remove [key]`,
+      `${conf.prefix}${module.exports.aliases[0]} list`
+    ]
+  }
+}
+
 let replaceFile = './db/replace.json'
 
 module.exports.module = function (message) {

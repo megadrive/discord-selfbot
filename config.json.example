@@ -1,5 +1,7 @@
 {
 	"owner-id": "123456789034563",
 	"token": "addyours",
-	"prefix": "_"
+	"prefix": "_",
+	"darksky_apikey": "your_darksky_apikey",
+	"google_apikey": "your_google_apikey"
 }

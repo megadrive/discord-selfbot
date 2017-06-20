@@ -4,7 +4,7 @@ let conf = require('./config')
 const Discord = require('discord.js')
 let bot = new Discord.Client()
 bot.commands = {
-  message: {}
+  message: {}, help: {}, raw: {}
 }
 bot.modules = {
   message: {}
@@ -26,12 +26,21 @@ function registerCommand (file, module) {
     } else {
       for (let a = 0; a < module.aliases.length; a++) {
         if (module.run && typeof module.run === 'function') {
+          // Add the whole module so we can access it later if necessary.
+          bot.commands['raw'][module.aliases[a]] = module
+          // Add the run function
           bot.commands[module.event][module.aliases[a]] = module.run
+
+          // Add help documentation if it exists
+          if (module.help && typeof module.help === 'function') {
+            bot.commands['help'][module.aliases[a]] = module.help
+          }
         } else {
           reject(new Error(`Module.run is not a function: ${file}`))
         }
       }
 
+      // Add a module if it exists. These run on every `event`, no command call necessary.
       if (module.module && typeof module.module === 'function') {
         bot.modules[module.event][module.aliases[0]] = module.module
       }
@@ -63,9 +72,18 @@ bot.on('message', function (message) {
   if (message.author.id === conf['owner-id']) {
     if (message.content.startsWith(conf.prefix)) {
       let trigger = message.content.split(' ')[0].substr(1)
-      let func = bot.commands['message'][trigger]
-      if (typeof func === 'function' && func !== undefined) {
-        func(message)
+      let runFunc = bot.commands['message'][trigger]
+      let helpFunc = bot.commands['help'][trigger]
+      if (message.content.includes('--help')) {
+        let helpData = helpFunc()
+        let template = 'DESCRIPTION\n\t{description}\n\nUSAGE\n\t{usage}\n\nALIASES\n\t{aliases}'
+          .replace('{description}', helpData.description, 'g')
+          .replace('{usage}', helpData.usage.join('\n\t'), 'g')
+          .replace('{aliases}', bot.commands.raw[trigger].aliases.join('\n\t'), 'g')
+
+        message.channel.send('```\n' + template + '\n```')
+      } else if (typeof runFunc === 'function' && runFunc !== undefined) {
+        runFunc(message)
       }
     } else {
       // run all modules

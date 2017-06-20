@@ -7,6 +7,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Deletes your last 10 messages. If you supply a number as an argument, it will delete that many to a maximum of 100.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]}`, `${conf.prefix}${module.exports.aliases[0]} 40`]
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
 

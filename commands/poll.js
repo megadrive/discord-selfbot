@@ -9,6 +9,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Creates a Strawpoll. First argument is the title, follows by as many options as you need. Arguments are separated by '|'.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]} Strawpoll title! | Option 1 | Option 2 | Option 3`]
+  }
+}
+
 // _poll This is my question | This is an answer | this is an answer too
 module.exports.run = function (message) {
   message.delete()

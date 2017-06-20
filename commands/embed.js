@@ -7,6 +7,14 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Takes an image URL or a Reddit URL and embeds it as a file attachment. NOTE: Will attempt to attach ANY filetype, but please note this only works as intended on image filetypes.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]} [image url or reddit url]`]
+  }
+}
+
 function getUrlFromRedditUrl (redditUrl) {
   return new Promise(function (resolve, reject) {
     let reReddit = new RegExp('(www.)?redd.?it(.com)?.+')

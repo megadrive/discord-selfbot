@@ -9,23 +9,19 @@ module.exports = {
   event: 'message'
 }
 
+module.exports.help = function () {
+  let conf = require('../config')
+  return {
+    description: `Outputs a BTTV emote as a file attachment. Only supports _global_ emotes.`,
+    usage: [`${conf.prefix}${module.exports.aliases[0]} [Global BTTV emote]`]
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
 
   let split = message.content.split(' ')
   let raw = split[1]
-
-/*
-{
-  "url": "//cdn.betterttv.net/emote/54fa925e01e468494b85b54d/1x",
-  "width": 28,
-  "height": 28,
-  "imageType": "png",
-  "regex": "OhMyGoodness",
-  "channel": null
-},
-
-*/
 
   let emote = bttv.filter(function (em) {
     return em.regex === raw
