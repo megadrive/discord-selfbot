@@ -1,5 +1,6 @@
 'use strict'
 
+const argv = require('minimist')(process.argv.slice(2))
 let conf = require('./config')
 const Discord = require('discord.js')
 let bot = new Discord.Client()
@@ -24,20 +25,30 @@ function registerCommand (file, module) {
     if (module.aliases === undefined || module.event === undefined || module.run === undefined) {
       reject(new Error(`Module.aliases or Module.run doesn't exist: ${file}`))
     } else {
-      for (let a = 0; a < module.aliases.length; a++) {
-        if (module.run && typeof module.run === 'function') {
-          // Add the whole module so we can access it later if necessary.
-          bot.commands['raw'][module.aliases[a]] = module
-          // Add the run function
-          bot.commands[module.event][module.aliases[a]] = module.run
+      // If a command/module has a 'depends-on-flag' array, only add if the bot is launched with that flag.
+      if ((module['depends-on-flag'] && argv[module['depends-on-flag']]) || module['depends-on-flag'] === undefined) {
+        for (let a = 0; a < module.aliases.length; a++) {
+          if (module.run && typeof module.run === 'function') {
+            // Add the whole module so we can access it later if necessary.
+            bot.commands['raw'][module.aliases[a]] = module
+            // Add the run function
+            bot.commands[module.event][module.aliases[a]] = module.run
 
-          // Add help documentation if it exists
-          if (module.help && typeof module.help === 'function') {
-            bot.commands['help'][module.aliases[a]] = module.help
+            // If there is an init function, init.
+            if (module.init && typeof module.init === 'function') {
+              module.init()
+            }
+
+            // Add help documentation if it exists
+            if (module.help && typeof module.help === 'function') {
+              bot.commands['help'][module.aliases[a]] = module.help
+            }
+          } else {
+            reject(new Error(`Module.run is not a function: ${file}`))
           }
-        } else {
-          reject(new Error(`Module.run is not a function: ${file}`))
         }
+      } else {
+        reject(new Error(`Flag ${module['depends-on-flag']} not set for ${file} loading, ignoring.`))
       }
 
       // Add a module if it exists. These run on every `event`, no command call necessary.
@@ -45,7 +56,7 @@ function registerCommand (file, module) {
         bot.modules[module.event][module.aliases[0]] = module.module
       }
 
-      resolve(`Successfully added module ${file} with aliases: ${module.aliases} on event ${module.event}`)
+      resolve(`Successfully added command ${file} with aliases: ${module.aliases} on event ${module.event}`)
     }
   })
 }
@@ -76,23 +87,29 @@ bot.on('message', function (message) {
       let helpFunc = bot.commands['help'][trigger]
       if (message.content.includes('--help')) {
         let helpData = helpFunc()
+        // Check if usage is an array, if not just use whatever is there, which should be a string.
+        let usage = Array.isArray(helpData.usage) ? helpData.usage.join('\n\t') : helpData.usage
         let template = 'DESCRIPTION\n\t{description}\n\nUSAGE\n\t{usage}\n\nALIASES\n\t{aliases}'
           .replace('{description}', helpData.description, 'g')
-          .replace('{usage}', helpData.usage.join('\n\t'), 'g')
+          .replace('{usage}', usage, 'g')
           .replace('{aliases}', bot.commands.raw[trigger].aliases.join('\n\t'), 'g')
 
         message.channel.send('```\n' + template + '\n```')
       } else if (typeof runFunc === 'function' && runFunc !== undefined) {
         runFunc(message)
       }
-    } else {
-      // run all modules
-      let keys = Object.keys(bot.modules['message'])
-      for (let i = 0; i < keys.length; i++) {
-        bot.modules['message'][keys[i]](message)
-      }
     }
+  }
+
+  // run all modules
+  let keys = Object.keys(bot.modules['message'])
+  for (let i = 0; i < keys.length; i++) {
+    bot.modules['message'][keys[i]](message)
   }
 })
 
 bot.login(conf.token)
+
+process.on('unhandledRejection', r => {
+  console.error('Please open an issue on GitHub with this text if you see this event.', r)
+})

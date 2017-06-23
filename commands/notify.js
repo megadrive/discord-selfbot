@@ -1,21 +1,53 @@
 'use strict'
 
 let jsonfile = require('jsonfile')
+let notifyFile = './db/notify.json'
+let notifier = require('../notifier')
 
 module.exports = {
   aliases: ['notify'],
-  event: 'message'
+  event: 'message',
+  'depends-on-flag': ['notify']
+}
+
+// Special function _only_ for notify.
+module.exports.init = function () {
+  notifier.login()
 }
 
 module.exports.help = function () {
   let conf = require('../config')
   return {
     description: `Allows you to set words to be notified about via DM.`,
-    usage: [`${conf.prefix}${module.exports.aliases[0]} add [word]\n${conf.prefix}${module.exports.aliases[0]} remove [word]`]
+    usage: [
+      `${conf.prefix}${module.exports.aliases[0]} add [word]`,
+      `${conf.prefix}${module.exports.aliases[0]} remove [word]`,
+      `${conf.prefix}${module.exports.aliases[0]} list`
+    ]
   }
 }
 
-let notifyFile = './db/notify.json'
+module.exports.module = function (message) {
+  // If message was said by owner, ignore
+  if (message.author.id === require('../config')['owner-id']) return
+
+  let words = jsonfile.readFileSync(notifyFile, {throw: false})
+  if (words.data !== null) {
+    words.data.forEach(function (word) {
+      if (message.content.includes(word)) {
+        let them = message.member
+        let server = message.guild
+
+        // Only occur if in a TextChannel (and not a DMChannel or GroupDMChannel)
+        if (server) {
+          let send = `[notify] '${word}' was said in ${server} by ${them}:\n${message.content}`
+          if (notifier.ready) notifier.sendNotification(send)
+        }
+      }
+    })
+  }
+}
+
 module.exports.run = function (message) {
   message.delete()
   let args = message.content.split(' ')
@@ -44,6 +76,8 @@ module.exports.run = function (message) {
         json.data.splice(index, 1)
         reply += `was removed from the list.`
       }
+    } else if (action === 'list') {
+      reply += `Words you are currently being notified about:\n${json.data.join(', ')}`
     } else {
       reply = `[notify] Available actions are 'add <word> and remove <word>`
     }

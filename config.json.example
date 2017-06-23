@@ -3,5 +3,6 @@
 	"token": "addyours",
 	"prefix": "_",
 	"darksky_apikey": "your_darksky_apikey",
-	"google_apikey": "your_google_apikey"
+	"google_apikey": "your_google_apikey",
+	"notifier-token": ""
 }
