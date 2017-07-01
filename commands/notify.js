@@ -33,14 +33,14 @@ module.exports.module = function (message) {
 
   let words = jsonfile.readFileSync(notifyFile, {throw: false})
   if (words.data !== null) {
-    words.data.forEach(function (word) {
-      if (message.content.includes(word)) {
+    words.data.forEach(function (phrase) {
+      if (message.content.includes(phrase)) {
         let them = message.member
         let server = message.guild
 
         // Only occur if in a TextChannel (and not a DMChannel or GroupDMChannel)
         if (server) {
-          let send = `[notify] '${word}' was said in ${server} by ${them}:\n${message.content}`
+          let send = `[notify] '${phrase}' was said in ${server} by ${them}:\n${message.content}`
           if (notifier.ready) notifier.sendNotification(send)
         }
       }
@@ -53,7 +53,7 @@ module.exports.run = function (message) {
   let args = message.content.split(' ')
   if (message.content.indexOf(' ') >= 0) {
     let action = args[1] !== undefined ? args[1] : null
-    let word = args[2] !== undefined ? args[2].toLowerCase() : null
+    let word = args.length >= 3 ? args.slice(2).join(' ') : ''
 
     args = message.content.split(' ')
 
@@ -64,7 +64,7 @@ module.exports.run = function (message) {
     if (action === 'add') {
       if (json.data.includes(word) === false) {
         json.data.push(word)
-        reply += `was added. You will receive a notification when this is said.`
+        reply += `was added. You will receive a DM notification when this is said.`
       } else {
         reply += `is already in the list.`
       }
@@ -77,9 +77,9 @@ module.exports.run = function (message) {
         reply += `was removed from the list.`
       }
     } else if (action === 'list') {
-      reply += `Words you are currently being notified about:\n${json.data.join(', ')}`
+      reply += `Phrases you are currently being notified about:\n${json.data.join(', ')}`
     } else {
-      reply = `[notify] Available actions are 'add <word> and remove <word>`
+      reply = `[notify] Available actions are 'add <phrase> and remove <phrase>`
     }
 
     jsonfile.writeFileSync(notifyFile, json)
